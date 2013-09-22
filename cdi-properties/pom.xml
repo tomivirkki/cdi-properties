@@ -2,19 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.vaadin.addon</groupId>
-		<artifactId>cdi-properties-parent</artifactId>
-		<version>0.9.1</version>
-	</parent>
+	<groupId>org.vaadin.addon</groupId>
 	<artifactId>cdi-properties</artifactId>
+	<version>0.9.2</version>
 
 	<properties>
 		<annotation.package>${project.build.directory}/generated-sources/src/main/java/org/vaadin/addon/cdiproperties/annotation</annotation.package>
 		<producer.package>${project.build.directory}/generated-sources/src/main/java/org/vaadin/addon/cdiproperties/producer</producer.package>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-cdi</artifactId>
+			<version>1.0.0.alpha1</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
@@ -36,7 +39,7 @@
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>cdi-properties-generator</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.2</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
