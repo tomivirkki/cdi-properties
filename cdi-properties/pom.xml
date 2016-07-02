@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-cdi</artifactId>
-			<version>1.0.0.alpha1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
@@ -106,7 +106,6 @@
 						<configuration>
 							<classpathScope>compile</classpathScope>
 							<mainClass>org.vaadin.addon.cdiproperties.Generator</mainClass>
-							<workingDirectory>${project.basedir}</workingDirectory>
 							<arguments>
 								<argument>${annotation.package}</argument>
 								<argument>${producer.package}</argument>

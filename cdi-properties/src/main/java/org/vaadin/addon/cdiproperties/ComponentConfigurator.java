@@ -183,6 +183,39 @@ public class ComponentConfigurator implements Serializable {
         }
     }
 
+    private static class CustomPropertyDescriptionKey extends CustomProperty {
+        @Inject
+        private Instance<TextBundle> textBundle;
+        @Inject
+        private Instance<Localizer> localizer;
+
+        @Override
+        void apply(Component component, Annotation propertyAnnotation) {
+            final String descriptionKey = (String) getPropertyValue(
+                    propertyAnnotation, "descriptionKey");
+            final Boolean localized = (Boolean) getPropertyValue(
+                    propertyAnnotation, "localized");
+            if (!IGNORED_STRING.equals(descriptionKey)) {
+                try {
+                    component.setCaption(textBundle.get().getText(descriptionKey));
+                    if (localized) {
+                        localizer.get().addLocalizedCaption(component,
+                                                            descriptionKey);
+
+                    }
+                } catch (final UnsatisfiedResolutionException e) {
+                    component.setCaption("No TextBundle implementation found!");
+                }
+
+            }
+        }
+
+        @Override
+        boolean appliesTo(Component component) {
+            return true;
+        }
+    }
+
     private static class CustomPropertyMargin extends CustomProperty {
         @Override
         void apply(Component component, Annotation propertyAnnotation) {
