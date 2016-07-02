@@ -44,8 +44,6 @@ class Generator {
             Long.class, Float.class, Double.class);
 
     public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH);
-
         Set<ComponentModel> componentModels = Sets.newHashSet();
 
         for (PojoClass pojoClass : PojoClassFactory
