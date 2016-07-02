@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
@@ -44,6 +43,7 @@ class Generator {
             Long.class, Float.class, Double.class);
 
     public static void main(String[] args) {
+
         Set<ComponentModel> componentModels = Sets.newHashSet();
 
         for (PojoClass pojoClass : PojoClassFactory
@@ -195,10 +195,7 @@ class Generator {
 
     static String formatDefaultValue(Object defaultValue) {
         String result = String.valueOf(defaultValue);
-
-        if (defaultValue instanceof Boolean) {
-            result = defaultValue.toString();
-        } else if (defaultValue instanceof String) {
+        if (defaultValue instanceof String) {
             result = "\"" + defaultValue + "\"";
         } else if (defaultValue instanceof Float) {
             result = result.concat("f");
