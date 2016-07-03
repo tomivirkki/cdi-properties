@@ -19,6 +19,8 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.TextField;
+
 
 @SuppressWarnings("serial")
 @SessionScoped
@@ -196,15 +198,16 @@ public class ComponentConfigurator implements Serializable {
             final Boolean localized = (Boolean) getPropertyValue(
                     propertyAnnotation, "localized");
             if (!IGNORED_STRING.equals(descriptionKey)) {
+                TextField field = (TextField) component;
                 try {
-                    component.setCaption(textBundle.get().getText(descriptionKey));
+                    field.setDescription(textBundle.get().getText(descriptionKey));
                     if (localized) {
                         localizer.get().addLocalizedCaption(component,
                                                             descriptionKey);
 
                     }
                 } catch (final UnsatisfiedResolutionException e) {
-                    component.setCaption("No TextBundle implementation found!");
+                    field.setDescription("No TextBundle implementation found!");
                 }
 
             }
@@ -212,7 +215,7 @@ public class ComponentConfigurator implements Serializable {
 
         @Override
         boolean appliesTo(Component component) {
-            return true;
+            return (component instanceof TextField);
         }
     }
 
