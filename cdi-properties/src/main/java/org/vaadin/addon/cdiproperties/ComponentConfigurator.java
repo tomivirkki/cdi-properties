@@ -202,9 +202,8 @@ public class ComponentConfigurator implements Serializable {
                 try {
                     field.setDescription(textBundle.get().getText(descriptionKey));
                     if (localized) {
-                        localizer.get().addLocalizedCaption(component,
+                        localizer.get().addLocalizedDescription(field,
                                                             descriptionKey);
-
                     }
                 } catch (final UnsatisfiedResolutionException e) {
                     field.setDescription("No TextBundle implementation found!");
