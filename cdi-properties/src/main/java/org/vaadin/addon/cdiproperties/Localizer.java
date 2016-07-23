@@ -55,7 +55,7 @@ public class Localizer implements Serializable {
 
         for (final Entry<AbstractComponent, String> entry : localizedDescriptions.entrySet()) {
             try {
-                entry.getKey().setValue(
+                entry.getKey().setDescription(
                         textBundle.get().getText(entry.getValue()));
             } catch (final UnsatisfiedResolutionException e) {
                 entry.getKey()
