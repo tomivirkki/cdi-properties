@@ -19,7 +19,7 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.AbstractComponent;
 
 
 @SuppressWarnings("serial")
@@ -198,7 +198,7 @@ public class ComponentConfigurator implements Serializable {
             final Boolean localized = (Boolean) getPropertyValue(
                     propertyAnnotation, "localized");
             if (!IGNORED_STRING.equals(descriptionKey)) {
-                TextField field = (TextField) component;
+                AbstractComponent field = (AbstractComponent) component;
                 try {
                     field.setDescription(textBundle.get().getText(descriptionKey));
                     if (localized) {
@@ -214,7 +214,7 @@ public class ComponentConfigurator implements Serializable {
 
         @Override
         boolean appliesTo(Component component) {
-            return (component instanceof TextField);
+            return (component instanceof AbstractComponent);
         }
     }
 
