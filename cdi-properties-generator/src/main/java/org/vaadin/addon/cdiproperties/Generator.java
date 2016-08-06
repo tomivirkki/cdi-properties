@@ -10,8 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.vaadin.addon.cdiproperties.Generator.ComponentModel.ComponentProperty;
-
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.google.gwt.thirdparty.guava.common.collect.Sets;
 import com.openpojo.reflection.PojoClass;
@@ -25,9 +23,11 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.LegacyWindow;
 import com.vaadin.ui.LoginForm;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.components.colorpicker.ColorPickerGrid;
 import com.vaadin.ui.components.colorpicker.ColorPickerHistory;
 import com.vaadin.ui.components.colorpicker.ColorPickerSelect;
+import org.vaadin.addon.cdiproperties.Generator.ComponentModel.ComponentProperty;
 
 class Generator {
 
@@ -37,7 +37,7 @@ class Generator {
                     LoginForm.class);
     private static Set<String> excludedProperties = Sets.newHashSet("UI",
             "componentError", "connectorEnabled", "connectorId", "width",
-            "height", "stateType", "type", "styleName");
+            "height", "stateType", "type", "styleName", "timeFormat");
     private static Set primitiveWrapperClasses = Sets.newHashSet(Boolean.class,
             Byte.class, Character.class, Short.class, Integer.class,
             Long.class, Float.class, Double.class);
@@ -169,6 +169,12 @@ class Generator {
             result.add(new ComponentProperty("String", "valueKey",
                     "org.vaadin.addon.cdiproperties.ComponentConfigurator.IGNORED_STRING"));
         }
+
+        if (implementation instanceof TextField) {
+            result.add(new ComponentProperty("String", "descriptionKey",
+                    "org.vaadin.addon.cdiproperties.ComponentConfigurator.IGNORED_STRING"));
+        }
+
         return result;
     }
 

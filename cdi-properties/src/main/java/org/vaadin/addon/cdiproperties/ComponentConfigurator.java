@@ -19,6 +19,8 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.AbstractComponent;
+
 
 @SuppressWarnings("serial")
 @SessionScoped
@@ -180,6 +182,39 @@ public class ComponentConfigurator implements Serializable {
         @Override
         boolean appliesTo(Component component) {
             return true;
+        }
+    }
+
+    private static class CustomPropertyDescriptionKey extends CustomProperty {
+        @Inject
+        private Instance<TextBundle> textBundle;
+        @Inject
+        private Instance<Localizer> localizer;
+
+        @Override
+        void apply(Component component, Annotation propertyAnnotation) {
+            final String descriptionKey = (String) getPropertyValue(
+                    propertyAnnotation, "descriptionKey");
+            final Boolean localized = (Boolean) getPropertyValue(
+                    propertyAnnotation, "localized");
+            if (!IGNORED_STRING.equals(descriptionKey)) {
+                AbstractComponent field = (AbstractComponent) component;
+                try {
+                    field.setDescription(textBundle.get().getText(descriptionKey));
+                    if (localized) {
+                        localizer.get().addLocalizedDescription(field,
+                                                            descriptionKey);
+                    }
+                } catch (final UnsatisfiedResolutionException e) {
+                    field.setDescription("No TextBundle implementation found!");
+                }
+
+            }
+        }
+
+        @Override
+        boolean appliesTo(Component component) {
+            return (component instanceof AbstractComponent);
         }
     }
 
