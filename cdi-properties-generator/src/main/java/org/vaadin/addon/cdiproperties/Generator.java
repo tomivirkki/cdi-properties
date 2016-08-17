@@ -170,7 +170,7 @@ class Generator {
                     "org.vaadin.addon.cdiproperties.ComponentConfigurator.IGNORED_STRING"));
         }
 
-        if (implementation instanceof TextField) {
+        if (implementation instanceof AbstractComponent) {
             result.add(new ComponentProperty("String", "descriptionKey",
                     "org.vaadin.addon.cdiproperties.ComponentConfigurator.IGNORED_STRING"));
         }

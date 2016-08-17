@@ -18,7 +18,7 @@ import javax.inject.Qualifier;
 import com.vaadin.cdi.UIScoped;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.AbstractComponent;
 
 @SuppressWarnings("serial")
 @UIScoped
@@ -29,7 +29,7 @@ public class Localizer implements Serializable {
 
     private final Map<Component, String> localizedCaptions = new HashMap<Component, String>();
     private final Map<Label, String> localizedLabelValues = new HashMap<Label, String>();
-    private final Map<TextField, String> localizedDescriptions = new HashMap<TextField, String>();
+    private final Map<AbstractComponent, String> localizedDescriptions = new HashMap<AbstractComponent, String>();
 
     void updateCaption(@Observes @TextBundleUpdated final Object parameters) {
         for (final Entry<Component, String> entry : localizedCaptions
@@ -53,10 +53,10 @@ public class Localizer implements Serializable {
             }
         }
 
-        for (final Entry<TextField, String> entry : localizedDescriptions.entrySet()) {
+        for (final Entry<AbstractComponent, String> entry : localizedDescriptions.entrySet()) {
             try {
-                entry.getKey().setValue(
-                        textBundle.get().gettext(entry.getValue()));
+                entry.getKey().setDescription(
+                        textBundle.get().getText(entry.getValue()));
             } catch (final UnsatisfiedResolutionException e) {
                 entry.getKey()
                         .setDescription("No TextBundle implementation found!");
@@ -72,7 +72,7 @@ public class Localizer implements Serializable {
         localizedLabelValues.put(label, labelValueKey);
     }
 
-    void addLocalizedDescription(final TextField field, final String descriptionKey) {
+    void addLocalizedDescription(final AbstractComponent field, final String descriptionKey) {
         localizedDescriptions.put(field, descriptionKey);
     }
 
