@@ -4,3 +4,5 @@
 .project
 target/
 
+cdi-properties/src/main/java/org/vaadin/addon/cdiproperties/annotation
+cdi-properties/src/main/java/org/vaadin/addon/cdiproperties/producer
