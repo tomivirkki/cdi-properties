@@ -77,10 +77,7 @@ class Generator {
                 Object implementation = getPojoInstance(pojoClass);
 
                 if (implementation != null) {
-                    ComponentModel componentModel = new ComponentModel(
-                            pojoClass.getClazz());
-
-                    Method[] pojoMethods = pojoClass.getClazz().getMethods();
+                    ComponentModel componentModel = new ComponentModel(pojoClass.getClazz());
 
                     // Add bean properties
                     BeanInfo bi = Introspector.getBeanInfo(implementation.getClass());

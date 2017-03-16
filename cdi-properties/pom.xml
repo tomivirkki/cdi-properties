@@ -7,8 +7,8 @@
 	<version>0.10.0</version>
 
 	<properties>
-		<annotation.package>${project.build.directory}/generated-sources/src/main/java/org/vaadin/addon/cdiproperties/annotation</annotation.package>
-		<producer.package>${project.build.directory}/generated-sources/src/main/java/org/vaadin/addon/cdiproperties/producer</producer.package>
+		<annotation.package>${project.build.directory}/generated-sources/cdi-properties/org/vaadin/addon/cdiproperties/annotation</annotation.package>
+		<producer.package>${project.build.directory}/generated-sources/cdi-properties/org/vaadin/addon/cdiproperties/producer</producer.package>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
@@ -39,8 +39,8 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -117,7 +117,7 @@
 								<argument>${annotation.package}</argument>
 								<argument>${producer.package}</argument>
 							</arguments>
-							<sourceRoot>${project.build.directory}/generated-sources/src/main/java/</sourceRoot>
+							<sourceRoot>${project.build.directory}/generated-sources/cdi-properties/</sourceRoot>
 						</configuration>
 						<goals>
 							<goal>java</goal>
@@ -134,8 +134,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
 
 				</plugin>
