@@ -1,9 +1,14 @@
 package org.vaadin.addon.cdiproperties;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.enterprise.context.SessionScoped;
@@ -12,14 +17,13 @@ import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.AbstractComponent;
 
 
 @SuppressWarnings("serial")
@@ -93,18 +97,27 @@ public class ComponentConfigurator implements Serializable {
 
     private static void applyProperties(Component component,
             Annotation propertyAnnotation) {
-        final BeanItem bi = new BeanItem(component);
-
-        for (Method method : propertyAnnotation.getClass().getMethods()) {
-            try {
-                Object value = method.invoke(propertyAnnotation);
-                if (!IGNORED_STRING.equals(value)) {
-                    bi.getItemProperty(method.getName()).setValue(value);
-                }
-            } catch (Exception e) {
-                // Ignore
+        try {
+            final BeanInfo bi = Introspector.getBeanInfo(component.getClass());
+            HashMap<String, Method> methods = new HashMap<String, Method>(bi.getPropertyDescriptors().length);
+            for (PropertyDescriptor p : bi.getPropertyDescriptors()) {
+                methods.put(p.getName(), p.getWriteMethod());
             }
+
+            for (Method method : propertyAnnotation.getClass().getMethods()) {
+                try {
+                    Object value = method.invoke(propertyAnnotation);
+                    if (!IGNORED_STRING.equals(value)) {
+                        methods.get(method.getName()).invoke(value);
+                    }
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+        } catch (IntrospectionException e) {
+            // Ignore
         }
+
     }
 
     private static class CustomPropertySize extends CustomProperty {

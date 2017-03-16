@@ -1,21 +1,23 @@
 package org.vaadin.addon.cdiproperties;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.collect.Sets;
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.impl.PojoClassFactory;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
@@ -28,6 +30,25 @@ import com.vaadin.ui.components.colorpicker.ColorPickerGrid;
 import com.vaadin.ui.components.colorpicker.ColorPickerHistory;
 import com.vaadin.ui.components.colorpicker.ColorPickerSelect;
 import org.vaadin.addon.cdiproperties.Generator.ComponentModel.ComponentProperty;
+
+class Sets {
+    static <T> Set<T> newHashSet(T ... classes) {
+        HashSet<T> result = new HashSet<T>(classes.length);
+        for (T c : classes) {
+            result.add(c);
+        }
+
+        return result;
+    }
+}
+
+class Lists {
+    static <T> List<T> newArrayList(Collection<T> elements) {
+        ArrayList<T> result = new ArrayList<T>(elements.size());
+        result.addAll(elements);
+        return result;
+    }
+}
 
 class Generator {
 
@@ -42,7 +63,9 @@ class Generator {
             Byte.class, Character.class, Short.class, Integer.class,
             Long.class, Float.class, Double.class);
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args) throws IntrospectionException {
 
         Set<ComponentModel> componentModels = Sets.newHashSet();
 
@@ -60,35 +83,28 @@ class Generator {
                     Method[] pojoMethods = pojoClass.getClazz().getMethods();
 
                     // Add bean properties
-                    BeanItem bi = new BeanItem(implementation);
-                    for (Object pid : bi.getItemPropertyIds()) {
+                    BeanInfo bi = Introspector.getBeanInfo(implementation.getClass());
+                    PropertyDescriptor[] propertyDescriptor = bi.getPropertyDescriptors();
 
-                        boolean setterFound = false;
-                        for (Method pojoMethod : pojoMethods) {
-                            if (pojoMethod.getName().equalsIgnoreCase(
-                                    "set" + pid)) {
-                                setterFound = true;
-                                break;
-                            }
-                        }
+                    for (PropertyDescriptor pid : bi.getPropertyDescriptors()) {
+                        boolean setterFound = pid.getWriteMethod() != null;
 
-                        if (setterFound && !excludedProperties.contains(pid)) {
-                            Property property = bi.getItemProperty(pid);
-
-                            Class type = property.getType();
+                        if (setterFound && !excludedProperties.contains(pid.getName())) {
+                            Class type = pid.getPropertyType();
 
                             if (primitiveWrapperClasses.contains(type)
                                     || type.isEnum() || type == String.class
                                     || type == Class.class) {
 
-                                String defaultValue = formatDefaultValue(property
-                                        .getValue());
+
+                                String defaultValue = formatDefaultValue(getDefaultValue(pid));
                                 if (type == String.class) {
                                     defaultValue = "org.vaadin.addon.cdiproperties.ComponentConfigurator.IGNORED_STRING";
                                 }
 
                                 ComponentProperty cp = new ComponentProperty(
-                                        formatType(type), String.valueOf(pid),
+                                        formatType(type),
+                                        pid.getName(),
                                         defaultValue);
                                 componentModel.getProperties().add(cp);
                             }
@@ -122,6 +138,22 @@ class Generator {
             e.printStackTrace();
         }
 
+    }
+
+    private static Object getDefaultValue(PropertyDescriptor pid) {
+        Object result = pid.getReadMethod().getDefaultValue();
+
+        if (result == null) {
+            if (pid.getPropertyType().isEnum()) {
+                result = pid.getPropertyType().getEnumConstants()[0];
+            } else if (Boolean.class.isAssignableFrom(pid.getPropertyType())) {
+                result = false;
+            } else if (Double.class.isAssignableFrom(pid.getPropertyType())) {
+                result = 0.0d;
+            }
+        }
+
+        return result;
     }
 
     private static Collection<? extends ComponentProperty> getCustomProperties(
