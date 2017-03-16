@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.vaadin.addon</groupId>
 	<artifactId>cdi-properties</artifactId>
-	<version>0.9.3</version>
+	<version>0.10.0</version>
 
 	<properties>
 		<annotation.package>${project.build.directory}/generated-sources/src/main/java/org/vaadin/addon/cdiproperties/annotation</annotation.package>
@@ -46,8 +46,8 @@
 		<dependency>
 			<groupId>org.vaadin.addon</groupId>
 			<artifactId>cdi-properties-generator</artifactId>
-			<version>0.9.3</version>
-			<scope>provided</scope>
+			<version>0.10.0</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
