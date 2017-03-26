@@ -1,25 +1,24 @@
 package org.vaadin.addon.cdiproperties;
 
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
+import com.vaadin.server.Sizeable;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.*;
 
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
-
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.AbstractComponent;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 @SuppressWarnings("serial")
@@ -27,6 +26,8 @@ import com.vaadin.ui.AbstractComponent;
 public class ComponentConfigurator implements Serializable {
 
     public final static String IGNORED_STRING = "CDI_PROPERTIES_IGNORE";
+    @Inject
+    private Instance<CustomProperty> customProperties;
 
     private static Annotation getPropertyAnnotation(InjectionPoint ip,
             Class annotationClass) {
@@ -58,6 +59,31 @@ public class ComponentConfigurator implements Serializable {
         return result;
     }
 
+    private static void applyProperties(Component component,
+                                        Annotation propertyAnnotation) {
+        try {
+            final BeanInfo bi = Introspector.getBeanInfo(component.getClass());
+            HashMap<String, Method> methods = new HashMap<>(bi.getPropertyDescriptors().length);
+            for (PropertyDescriptor p : bi.getPropertyDescriptors()) {
+                methods.put(p.getName(), p.getWriteMethod());
+            }
+
+            for (Method method : propertyAnnotation.getClass().getMethods()) {
+                try {
+                    Object value = method.invoke(propertyAnnotation);
+                    if (!IGNORED_STRING.equals(value)) {
+                        methods.get(method.getName()).invoke(component, value);
+                    }
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+        } catch (IntrospectionException e) {
+            // Ignore
+        }
+
+    }
+
     public <T extends Component> T getComponent(
             Class<? extends Annotation> annotationClass, InjectionPoint ip)
             throws InstantiationException, IllegalAccessException {
@@ -82,29 +108,10 @@ public class ComponentConfigurator implements Serializable {
         return (T) component;
     }
 
-    @Inject
-    private Instance<CustomProperty> customProperties;
-
     public static abstract class CustomProperty {
         abstract void apply(Component component, Annotation propertyAnnotation);
 
         abstract boolean appliesTo(Component component);
-    }
-
-    private static void applyProperties(Component component,
-            Annotation propertyAnnotation) {
-        final BeanItem bi = new BeanItem(component);
-
-        for (Method method : propertyAnnotation.getClass().getMethods()) {
-            try {
-                Object value = method.invoke(propertyAnnotation);
-                if (!IGNORED_STRING.equals(value)) {
-                    bi.getItemProperty(method.getName()).setValue(value);
-                }
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
     }
 
     private static class CustomPropertySize extends CustomProperty {
