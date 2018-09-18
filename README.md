@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/cdi-properties)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/cdi-properties.svg)](https://vaadin.com/directory/component/cdi-properties)
+
 # CDI Properties
 
 CDI Properties contains individual annotations for each Vaadin core component that allow you to define a set of properties right above the injection point.
